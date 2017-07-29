@@ -13,7 +13,22 @@ class UsersController < ApplicationController
     render json: @user
   end
 
-  # POST /users
+  # POST /login
+  def login
+    user = User.find_by(name: user_params[:name]).try(:authenticate, user_params[:password])
+    
+    if user
+      render json: {
+        token: user.token
+      }, status: :ok
+    else 
+      render json: {
+        error: "Invalid username or password"
+      }, status: :unprocessable_entity
+    end
+  end
+
+  # POST /users & POST /register
   def create
     @user = User.new(user_params)
 
